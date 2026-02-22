@@ -1,0 +1,4 @@
+INSERT INTO stores (name)
+VALUES (?)
+ON CONFLICT (name) DO NOTHING
+RETURNING id
