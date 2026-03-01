@@ -1,0 +1,26 @@
+CREATE TABLE items (
+  id INTEGER PRIMARY KEY,
+  name TEXT UNIQUE NOT NULL,
+  on_list INTEGER NOT NULL CHECK (on_list IN (0, 1))
+);
+
+CREATE TABLE stores (
+  id INTEGER PRIMARY KEY,
+  name TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE locations (
+  id INTEGER PRIMARY KEY,
+  store INTEGER NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
+  position INTEGER NOT NULL,
+  name TEXT NOT NULL,
+  UNIQUE (store, position),
+  UNIQUE (store, name)
+);
+
+CREATE TABLE item_stores (
+  item INTEGER NOT NULL REFERENCES items (id) ON DELETE CASCADE,
+  store INTEGER NOT NULL REFERENCES stores (id) ON DELETE CASCADE,
+  location INTEGER REFERENCES locations (id) ON DELETE SET NULL,
+  PRIMARY KEY (item, store)
+) WITHOUT ROWID;
