@@ -1,0 +1,536 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* end reset */
+
+.layout {
+    --accent: #b39ddb;
+    --bg: #fff;
+    --border-faint: #f0f0f0;
+    --border: #eee;
+    --btn-bg: #f0f0f0;
+    --btn-border: #ddd;
+    --btn-fg: #444;
+    --content-max-width: 480px;
+    --content-padding: 16px;
+    --fab-bottom: calc(24px + env(safe-area-inset-bottom));
+    --fg-faint: #bbb;
+    --fg-muted: #888;
+    --fg: #222;
+    --input-border-focus: #aaa;
+    --input-border: #ddd;
+    --no-bg: #fce4e4;
+    --no-fg: #b44;
+    --sidebar-width: 64px;
+    --surface-active: #e8e8e8;
+    --surface: #f8f8f8;
+
+    background: var(--bg);
+    color: var(--fg);
+    display: flex;
+    min-height: 100vh;
+
+    &.dark {
+        --bg: #1a1a1a;
+        --border-faint: #2a2a2a;
+        --border: #333;
+        --btn-bg: #333;
+        --btn-border: #444;
+        --btn-fg: #ccc;
+        --fg-faint: #555;
+        --fg-muted: #888;
+        --fg: #e0e0e0;
+        --input-border-focus: #777;
+        --input-border: #444;
+        --no-bg: #3a1e1e;
+        --no-fg: #e99;
+        --surface-active: #3a3a3a;
+        --surface: #222;
+    }
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    max-width: var(--content-max-width);
+    min-height: 100vh;
+    overflow-x: clip; /* draw the loading bar only over the width of content, not full width including sidebar */
+    padding: 24px var(--content-padding) var(--fab-bottom);
+    position: relative;
+    user-select: none; /* it's probably not very useful to select anything in this app */
+    width: 100%;
+
+    &.loading::before {
+        animation: loading-bar 1.5s ease-in-out infinite;
+        background: var(--accent);
+        content: "";
+        height: 2px;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 30%;
+    }
+
+    &.shopping {
+        background: color-mix(in srgb, var(--accent) 8%, var(--bg));
+    }
+}
+
+.page {
+    flex-grow: 1;
+}
+
+/* Error banner */
+
+.error-banner {
+    align-items: center;
+    background: var(--no-bg);
+    border-radius: 5px;
+    border: 1px solid var(--no-fg);
+    color: var(--no-fg);
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 10px 12px;
+
+    > span {
+        flex-grow: 1;
+    }
+
+    > button {
+        background: none;
+        border: none;
+        color: var(--no-fg);
+        cursor: pointer;
+        flex-shrink: 0;
+        font-size: 16px;
+        padding: 0;
+    }
+}
+
+/* Typography */
+
+h1 {
+    border-bottom: 1px solid transparent;
+    color: var(--fg-muted);
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+
+    &:focus-within {
+        border-bottom-color: var(--input-border-focus);
+    }
+}
+
+.h1-edit {
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    field-sizing: content;
+    font: inherit;
+    letter-spacing: inherit;
+    outline: none;
+    resize: none;
+    text-transform: inherit;
+    width: 100%;
+
+}
+
+/* Interactive elements */
+
+button {
+    align-items: center;
+    background: none;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    font-size: 14px;
+    gap: 4px;
+    justify-content: center;
+    padding: 2px 2px;
+
+    &.no {
+        color: var(--no-fg);
+        background: var(--no-bg);
+    }
+}
+
+input[type="text"] {
+    background: var(--bg);
+    border-radius: 5px;
+    border: 1px solid var(--input-border);
+    color: var(--fg);
+    flex-grow: 1;
+    font-size: inherit;
+    outline: none;
+    padding: 5px 8px;
+    width: 0; /* without this, annoying intrinsic size makes the text input quite wide */
+
+    &:focus {
+        border-color: var(--input-border-focus);
+    }
+}
+
+/* Lists */
+
+ul {
+    list-style: none;
+
+    & + ul {
+        margin-top: 16px;
+    }
+}
+
+li {
+    align-items: center;
+    border-bottom: 1px solid var(--border-faint);
+    cursor: pointer;
+    display: flex;
+    gap: 4px;
+    min-height: 42px;
+
+    & > :is(a, div) {
+      align-items: center;
+      display: flex;
+      flex-grow: 1;
+      gap: 4px;
+      padding: 8px 4px;
+    }
+
+    &.active {
+        background: var(--surface-active);
+        font-weight: 500;
+    }
+}
+
+.dark-mode-toggle {
+    background: var(--btn-bg);
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    color: var(--btn-fg);
+    cursor: pointer;
+    font-size: 20px;
+    margin: 0px 8px;
+    padding: 6px;
+}
+
+.long-pressable {
+    touch-action: pan-y;
+    transition: background 0s;
+
+    &:active {
+        background: var(--surface-active);
+        transition: background 0s 200ms;
+    }
+}
+
+.sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    height: 100dvh;
+    padding: 16px 0;
+    position: sticky;
+    top: 0;
+    width: var(--sidebar-width);
+
+    & :is(a, div) {
+        align-items: center;
+        background: var(--btn-bg);
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        color: var(--btn-fg);
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        margin: 0 8px;
+
+        &.active {
+            background: var(--surface-active);
+        }
+
+        &.sidebar-shop {
+            color: var(--accent);
+            font-size: 24px;
+            height: 96px;
+
+            &.active {
+                background: color-mix(in srgb, var(--accent) 20%, transparent);
+            }
+        }
+
+        &.sidebar-list {
+            font-size: 24px;
+            height: 96px;
+        }
+
+        &.sidebar-stores {
+            font-size: 20px;
+            padding: 6px;
+        }
+    }
+
+}
+
+.sidebar-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 4px 16px;
+}
+
+.sidebar-divider-large {
+    border: none;
+    border-top: 1px solid var(--border);
+    /* 4x for below horizontal line, then 38px = exactly as tall as "Stores" */
+    margin: 4px 16px 42px 16px;
+}
+
+.fab {
+    bottom: var(--fab-bottom);
+    display: flex;
+    gap: 6px;
+    margin-top: var(--fab-bottom);
+    min-height: 38px;
+    position: sticky;
+    z-index: 2;
+}
+
+.fab-suggestions {
+    background: var(--bg);
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    bottom: 100%;
+    margin-bottom: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    width: 100%;
+}
+
+.fab-suggestion {
+    cursor: pointer;
+    padding: 8px 12px;
+}
+
+.fab-button {
+    align-items: center;
+    background: var(--btn-bg);
+    border-radius: 5px;
+    border: 1px solid var(--btn-border);
+    color: var(--btn-fg);
+    cursor: pointer;
+    display: flex;
+    font-size: 20px;
+    justify-content: center;
+    padding: 6px;
+}
+
+.page-header {
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 4px;
+    margin-bottom: 4px;
+    min-height: 27px;
+    padding-bottom: 4px;
+
+    & a {
+        display: flex;
+    }
+
+    & h1 {
+        align-items: center;
+        display: flex;
+        flex-grow: 1;
+    }
+}
+
+.reorder-button {
+    margin-left: auto;
+    margin-top: 8px;
+}
+
+.reorder-item {
+    animation-name: wobble;
+    animation-duration: 0.6s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+}
+
+.shop-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    /* Equal to the padding above done button */
+    &.no-section {
+        margin-top: 24px;
+    }
+
+    & > li {
+        border: 1px solid var(--btn-border);
+        border-radius: 8px;
+        min-height: auto;
+    }
+}
+
+.shopping-separator {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+    padding: 12px 4px;
+}
+
+.shopping-separator-line {
+    border-top: 1px solid var(--border);
+    flex-grow: 1;
+}
+
+.shopping-separator-label {
+    color: var(--fg-muted);
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.shopping-done {
+    align-items: center;
+    border-radius: 8px;
+    border: 1px solid var(--btn-border);
+    color: var(--fg-muted);
+    display: flex;
+    font-size: 14px;
+    gap: 4px;
+    justify-content: center;
+    margin-top: 24px;
+    padding: 8px;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+    width: 100%;
+}
+
+.section-label {
+    color: var(--fg-muted);
+    font-size: 12px;
+    margin-left: auto;
+    text-align: end;
+}
+
+.section-name-edit {
+    background: transparent;
+    border: none;
+    color: var(--fg-muted);
+    flex-grow: 1;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    outline: none;
+    padding-bottom: 4px;
+    padding-top: 8px;
+    text-transform: uppercase;
+}
+
+.screen {
+    background: transparent;
+    inset: 0;
+    position: fixed;
+    touch-action: none;
+    z-index: 1;
+}
+
+.scrim {
+    background: rgba(0, 0, 0, 0.3);
+    inset: 0;
+    position: fixed;
+    z-index: 1;
+}
+
+.tabs {
+    display: flex;
+    gap: 0;
+    margin-top: 8px;
+
+    & > button {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--fg-muted);
+        cursor: pointer;
+        flex-basis: 0;
+        flex-grow: 1;
+        font-size: 14px;
+        padding: 6px 12px;
+        text-transform: uppercase;
+
+        &:first-child {
+            border-radius: 6px 0 0 6px;
+        }
+
+        &:last-child {
+            border-radius: 0 6px 6px 0;
+        }
+
+        &.active {
+            background: var(--surface-active);
+            border-color: var(--btn-border);
+            cursor: default;
+        }
+    }
+}
+
+.tip {
+  align-items: center;
+  color: var(--fg-faint);
+  display: flex;
+  font-size: 14px;
+  margin-top: 16px;
+  min-height: 42px; /* matches li */
+  padding: 8px 4px;
+}
+
+/* Utilities */
+
+.cursor-pointer { cursor: pointer; }
+.invisible { visibility: hidden; }
+.icon-sm { font-size: 18px; vertical-align: -3px; }
+.muted { color: var(--fg-muted); }
+.padding-right-4px { padding-right: 4px; }
+.strikethrough { text-decoration: line-through; }
+
+/* Material symbols */
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0;
+}
+
+.material-symbols-outlined.fill {
+  font-variation-settings: 'FILL' 1;
+}
+
+@keyframes loading-bar {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(333%); }
+}
+
+@keyframes wobble {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(-0.5deg); }
+    75% { transform: rotate(0.5deg); }
+    100% { transform: rotate(0deg); }
+}
