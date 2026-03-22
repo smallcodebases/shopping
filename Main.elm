@@ -740,7 +740,6 @@ handleDeleteItem itemId =
                     Nothing ->
                         updateNone
             )
-        , replacePage ListPage
         ]
 
 
@@ -982,7 +981,7 @@ handleLongpressItem c itemId =
                     ShoppingPage storeId ->
                         updateSequence
                             [ updatePure (\model -> { model | longpressed = True })
-                            , pushPage (ItemStorePage itemId storeId)
+                            , pushPage (ShoppingItemPage storeId itemId)
                             ]
 
                     _ ->
@@ -1171,15 +1170,6 @@ handlePointerupSection =
                     ShoppingItemPage store item ->
                         updateSequence
                             [ theSectionUpdate item store
-                            , case sectionSpecification of
-                                SoldHereInSection _ ->
-                                    enqueueRequest (RequestMoveItemOff { item = item })
-
-                                SoldHereSomewhere ->
-                                    enqueueRequest (RequestMoveItemOff { item = item })
-
-                                NotSoldHere ->
-                                    updateNone
                             , replacePage (ShoppingPage store)
                             ]
 
@@ -1700,6 +1690,9 @@ handleUrlChanged url =
                                 case page of
                                     ShoppingPage storeId ->
                                         Just storeId
+
+                                    ShoppingSelectionPage ->
+                                        Nothing
 
                                     _ ->
                                         model.shopping
@@ -2572,7 +2565,7 @@ viewShoppingSelectionPage model =
                         [ text store.name ]
                     ]
             )
-        |> ul []
+        |> ul [class "shopping-selection-page-stores"]
     , if Dict.isEmpty model.stores then
         div
             [ class "tip" ]

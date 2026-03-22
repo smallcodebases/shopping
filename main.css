@@ -38,6 +38,7 @@ body {
     --list-item-anim-duration: 0.2s;
     --list-item-anim-y: 21px;
     --sidebar-width: 64px;
+    --shopping-bg: color-mix(in srgb, var(--accent) 8%, var(--bg));
     --surface-active: #e8e8e8;
     --surface: #f8f8f8;
 
@@ -88,7 +89,7 @@ body {
     }
 
     &.shopping {
-        background: color-mix(in srgb, var(--accent) 8%, var(--bg));
+        background: var(--shopping-bg);
     }
 }
 
@@ -432,6 +433,28 @@ li {
         border: 1px solid var(--btn-border);
         border-radius: 8px;
         min-height: auto;
+    }
+}
+
+.shopping-selection-page-stores {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 1fr 1fr;
+    margin-top: var(--content-padding);
+
+    & > li {
+        background: var(--shopping-bg);
+        border-bottom: none;
+        border-radius: 10px;
+        border: 1px solid var(--btn-border);
+        justify-content: center;
+        min-height: 56px;
+
+        & > a {
+            font-size: 15px;
+            justify-content: center;
+            text-align: center;
+        }
     }
 }
 
